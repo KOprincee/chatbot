@@ -41,13 +41,21 @@ input {
   flex-grow: 1;
 }
 
-img {
+.user img {
   max-width: 35px;
   margin-right: 10px;
   background-color: #eef;
   padding: 5px;
   border-radius: 10px;
   order: 2;
+}
+
+.bot img {
+  max-width: 35px;
+  margin-right: 10px;
+  background-color: #eef;
+  padding: 5px;
+  border-radius: 10px;
 }
 
 li {
@@ -63,7 +71,5 @@ ul {
   margin: 0;
   padding: 0;
   list-style: none;
-  max-width: 600px;
-  max-height: 650px;
   overflow: auto;
 }
