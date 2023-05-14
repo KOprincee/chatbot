@@ -122,7 +122,6 @@ const ChatBox = () => {
           },
         ]);
       }
-      console.log(jsonData);
     }
 
     if (gitResp !== "" && userInput.toLowerCase() !== "reset") {
@@ -221,7 +220,6 @@ const ChatBox = () => {
         case "repo":
           const response = await fetch(gitResp.repos_url);
           const jsonData = await response.json();
-          //console.log(jsonData);
 
           bot_response = {
             from: "bot",
