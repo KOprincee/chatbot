@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ChatBotImg from "../assets/chatbot.png";
 import GuestImg from "../assets/guest.png";
 import "./Chatbox.css";
@@ -17,6 +17,12 @@ const ChatBox = () => {
   const [gitResp, setgitResp] = useState("");
 
   let bot_response = "";
+
+  useEffect(() => {
+    //Scrolling to the bottom view
+    const form_el = document.getElementById("inputForm");
+    form_el.scrollIntoView();
+  }, [userMsg]);
 
   const inputSubmitHandler = async (e) => {
     //Preventing reloading of the form
@@ -282,7 +288,11 @@ const ChatBox = () => {
             </li>
           ))}
         </ul>
-        <form className="ChatBot-Input" onSubmit={inputSubmitHandler}>
+        <form
+          className="ChatBot-Input"
+          onSubmit={inputSubmitHandler}
+          id="inputForm"
+        >
           <input
             type="text"
             value={userInput}
