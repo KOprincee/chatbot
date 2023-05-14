@@ -48,7 +48,7 @@ const ChatBox = () => {
     }
 
     //Handling invalid messages
-    if (!botStart && userInput !== "start") {
+    if (!botStart && userInput.toLowerCase() !== "start") {
       bot_response = {
         from: "bot",
         msg: "Please type 'START' to begin with 🤖.",
@@ -59,9 +59,9 @@ const ChatBox = () => {
     if (
       botStart &&
       gitResp === "" &&
-      userInput !== "" &&
-      userInput !== "reset" &&
-      userInput !== "start"
+      userInput.toLowerCase() !== "" &&
+      userInput.toLowerCase() !== "reset" &&
+      userInput.toLowerCase() !== "start"
     ) {
       setUserMsg((prevMsg) => [
         ...prevMsg,
