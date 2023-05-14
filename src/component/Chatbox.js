@@ -271,7 +271,7 @@ const ChatBox = () => {
               <img
                 src={
                   data.from === "user"
-                    ? gitResp === "" && botStart
+                    ? gitResp === ""
                       ? GuestImg
                       : gitResp.avatar_url
                     : ChatBotImg
