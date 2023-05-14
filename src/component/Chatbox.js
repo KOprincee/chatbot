@@ -14,6 +14,7 @@ const ChatBox = () => {
   const [userInput, setuserInput] = useState("");
   const [botStart, setbotStart] = useState(false);
   const [userMsg, setUserMsg] = useState(CONST_MSG);
+  const [gitResp, setgitResp] = useState(CONST_MSG);
 
   let bot_response = "";
 
@@ -52,7 +53,7 @@ const ChatBox = () => {
         msg: "Sorry but I don't understand this message 🤖, please type 'START' to begin with.",
       };
     }
-
+    console.log(gitResp);
     //Checking for the entered username
     if (
       botStart &&
@@ -76,6 +77,7 @@ const ChatBox = () => {
       const jsonData = await response.json();
 
       if (response.ok) {
+        setgitResp(jsonData);
         if (jsonData.name === "") {
           setUserMsg((prevMsg) => [
             ...prevMsg,
@@ -107,8 +109,6 @@ const ChatBox = () => {
             - blog site: Displays the Blog Link, if found.
             - location: Displays the Location, if found.
             - can hire: Tells if the person can be hired.
-            - followers: Displays the number of followers of .
-            - following: Displays the number of people follows.
             - reset: Back to Square one! 😉`,
           },
         ]);
