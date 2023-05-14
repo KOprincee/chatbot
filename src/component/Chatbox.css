@@ -1,9 +1,9 @@
 .chatbox-container {
   position: relative;
   top: 100px;
-  left: 15%;
+  left: 2.5%;
   display: flex;
-  width: 65%;
+  width: 95%;
   border-radius: 15px;
   background: #ccf;
   align-self: center;
