@@ -14,7 +14,7 @@ const ChatBox = () => {
   const [userInput, setuserInput] = useState("");
   const [botStart, setbotStart] = useState(false);
   const [userMsg, setUserMsg] = useState(CONST_MSG);
-  const [gitResp, setgitResp] = useState(CONST_MSG);
+  const [gitResp, setgitResp] = useState("");
 
   let bot_response = "";
 
@@ -44,19 +44,21 @@ const ChatBox = () => {
     if (userInput.toLowerCase() === "reset") {
       setbotStart(false);
       setUserMsg(CONST_MSG);
+      setgitResp("");
     }
 
     //Handling invalid messages
     if (!botStart && userInput !== "start") {
       bot_response = {
         from: "bot",
-        msg: "Sorry but I don't understand this message 🤖, please type 'START' to begin with.",
+        msg: "Please type 'START' to begin with 🤖.",
       };
     }
-    console.log(gitResp);
+
     //Checking for the entered username
     if (
       botStart &&
+      gitResp === "" &&
       userInput !== "" &&
       userInput !== "reset" &&
       userInput !== "start"
@@ -78,7 +80,7 @@ const ChatBox = () => {
 
       if (response.ok) {
         setgitResp(jsonData);
-        if (jsonData.name === "") {
+        if (jsonData.name === "" || jsonData.name === null) {
           setUserMsg((prevMsg) => [
             ...prevMsg,
             {
@@ -101,7 +103,6 @@ const ChatBox = () => {
           {
             from: "bot",
             msg: `So what do you want to do now? Please enter one of the options here:
-            - help: Displays this message again.
             - bio: Displays the GitHub Bio, if found.
             - company: Displays the Company, if found.
             - avatar: Displays the GitHub Avatar, if found.
@@ -124,16 +125,140 @@ const ChatBox = () => {
       console.log(jsonData);
     }
 
+    if (gitResp !== "" && userInput.toLowerCase() !== "reset") {
+      switch (userInput.toLowerCase()) {
+        case "bio":
+          bot_response = {
+            from: "bot",
+            msg:
+              gitResp.bio === null
+                ? `${
+                    gitResp.name === null ? gitResp.login : gitResp.name
+                  } hasn't written a bio yet`
+                : gitResp.bio,
+          };
+          break;
+
+        case "company":
+          bot_response = {
+            from: "bot",
+            msg:
+              gitResp.company === null
+                ? `${
+                    gitResp.name === null ? gitResp.login : gitResp.name
+                  } hasn't updated a company `
+                : gitResp.company,
+          };
+          break;
+
+        case "avatar":
+          bot_response = {
+            from: "bot",
+            msg: (
+              <>
+                <img
+                  src={gitResp.avatar_url}
+                  alt={`${gitResp.login}'s Avatar`}
+                />
+              </>
+            ),
+          };
+          break;
+
+        case "blog site":
+          bot_response = {
+            from: "bot",
+            msg:
+              gitResp.blog === null ? (
+                `${
+                  gitResp.name === null ? gitResp.login : gitResp.name
+                } hasn't written any blog or website yet.`
+              ) : (
+                <>
+                  {gitResp.name === null ? gitResp.login : gitResp.name} writes
+                  at{" "}
+                  <a href={gitResp.blog} target="_blank" rel="noreferrer">
+                    here
+                  </a>
+                  ...
+                </>
+              ),
+          };
+          break;
+
+        case "location":
+          bot_response = {
+            from: "bot",
+            msg:
+              gitResp.location === null
+                ? `${
+                    gitResp.name === null ? gitResp.login : gitResp.name
+                  } hasn't updated the location`
+                : gitResp.location,
+          };
+          break;
+
+        case "can hire":
+          bot_response = {
+            from: "bot",
+            msg: gitResp.hireable ? (
+              <>
+                {gitResp.name === null ? gitResp.login : gitResp.name} can be
+                hired. Visit to the profile to see some of there work{" "}
+                <a href={gitResp.html_url} target="_blank" rel="noreferrer">
+                  <p>{gitResp.login}</p>
+                </a>
+                {"\n"}
+              </>
+            ) : (
+              `${
+                gitResp.name === null ? gitResp.login : gitResp.name
+              } can't be hired or hasn't updated there status.`
+            ),
+          };
+          break;
+
+        case "repo":
+          const response = await fetch(gitResp.repos_url);
+          const jsonData = await response.json();
+          //console.log(jsonData);
+
+          bot_response = {
+            from: "bot",
+            msg:
+              jsonData.length > 0 ? (
+                <>
+                  {jsonData.map((data, index) => (
+                    <a
+                      key={index}
+                      href={data.html_url}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {data.name}
+                    </a>
+                  ))}
+                </>
+              ) : (
+                `${
+                  gitResp.name === null ? gitResp.login : gitResp.name
+                } has no public repositories to be shown.`
+              ),
+          };
+
+          break;
+        default:
+          bot_response = {
+            from: "bot",
+            msg: "Please type only the options available above. Or type 'RESET' to get a fresh start.",
+          };
+          break;
+      }
+    }
+
     //Re-creating the bot answer
     if (bot_response !== "")
       setUserMsg((prevMsg) => [...prevMsg, bot_response]);
-
-    // //Checking if bot is started
-    // if (botStart && userInput !== "reset") {
-    //   //Checking GIT API response
-    //   bot_response = botText(userInput);
-    //   console.log(bot_response);
-    // }
 
     //Resetting input tag
     setuserInput("");
@@ -146,7 +271,13 @@ const ChatBox = () => {
           {userMsg.map((data, index) => (
             <li key={index} className={`chat-msg ${data.from}`}>
               <img
-                src={data.from === "user" ? GuestImg : ChatBotImg}
+                src={
+                  data.from === "user"
+                    ? gitResp === "" && botStart
+                      ? GuestImg
+                      : gitResp.avatar_url
+                    : ChatBotImg
+                }
                 alt="Guest"
               ></img>
               <p>{data.msg}</p>
