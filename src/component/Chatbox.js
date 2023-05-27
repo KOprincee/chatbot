@@ -6,7 +6,7 @@ import "./Chatbox.css";
 let CONST_MSG = [
   {
     from: "bot",
-    msg: "Hey there🖐 I am a ChatBot! Type 'START' to begin...",
+    msg: "Hey there🖐 I am a ChatBot! Type start to begin...",
   },
 ];
 
@@ -57,7 +57,7 @@ const ChatBox = () => {
     if (!botStart && userInput.toLowerCase() !== "start") {
       bot_response = {
         from: "bot",
-        msg: "Please type 'START' to begin with 🤖.",
+        msg: "Please type start to begin with 🤖.",
       };
     }
 
